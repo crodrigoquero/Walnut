@@ -1,0 +1,58 @@
+﻿@model Walnut.Entities.CompanyAPIcommandMAP
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Company API Command MAP</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CompanyAPICommandId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CompanyAPICommandId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.urlParameterName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.urlParameterName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.urlParameterValue_EntityName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.urlParameterValue_EntityName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.urlParameterValue_EntityRecordId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.urlParameterValue_EntityRecordId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.urlParameterValue_EntityPropertyName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.urlParameterValue_EntityPropertyName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

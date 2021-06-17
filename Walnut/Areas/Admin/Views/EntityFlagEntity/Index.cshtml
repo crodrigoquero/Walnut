@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Walnut.Entities.EntityFlagEntity>
+@using Walnut.Extensions
+@{
+    ViewBag.Title = "Entity Flag Relationships with Entities";
+}
+
+<h2>Relationships Between Flags and Entities</h2>
+<h4>With this facility you can setup relationships between a given entity (candidate, file, report, invoice, etc) and a entity flag, dinamicaly. Diferent entities can have multiple flags. Later, the system will launch diferent processes for  the entities depending on theirs flags configuration. </h4><p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table table-condensed">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.EntityId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EntityFlagId)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.EntityId)
+        </td>
+        <td>
+            @*@Html.DisplayFor(modelItem => item.EntityFlagId)*@
+            @item.GetFlagDescription()
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

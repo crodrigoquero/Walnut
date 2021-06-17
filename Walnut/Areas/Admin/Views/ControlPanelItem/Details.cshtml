@@ -1,0 +1,82 @@
+﻿@model Walnut.Entities.ControlPanelItem
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Control Panel Item</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ControlPanelId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ControlPanelId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MinValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MinValue)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaxValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaxValue)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Value)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Value)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.On)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.On)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProgressBar)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProgressBar)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Gauge)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Gauge)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

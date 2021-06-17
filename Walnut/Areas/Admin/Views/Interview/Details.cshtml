@@ -1,0 +1,50 @@
+﻿@model Walnut.Entities.Interview
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Candidate Interview</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CandidateId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CandidateId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InterviewStartDateAndTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InterviewStartDateAndTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InterviewEndDateAndTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InterviewEndDateAndTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.InterviewNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InterviewNumber)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

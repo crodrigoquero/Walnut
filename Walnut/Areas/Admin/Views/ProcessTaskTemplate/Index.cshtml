@@ -1,0 +1,155 @@
+﻿@model IEnumerable<Walnut.Entities.ProcessTaskTemplate>
+@using Walnut.Extensions
+@using Walnut.Models.CustomHTMLHelpers;
+@{
+    ViewBag.Title = "Index";
+}
+
+@if ((bool)Session["Filtered"] == true)
+{
+    <h3>@Model.FirstOrDefault().GetProcessDescription() Process - @Model.FirstOrDefault().GetProcessStageTemplateDescription() Tasks </h3>
+}
+else
+{
+    <h3>Process Tasks Templates</h3>
+}
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table table-condensed" id="dataTable">
+    <tr>
+        <th>
+            &nbsp;
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        @if ((bool)Session["Filtered"] == false)
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.ProcessId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProcessStageId)
+            </th>
+        }
+        <th></th>
+    </tr>
+    <tbody id="ProcessTaskTemplates">
+        @foreach (var item in Model)
+        {
+            <tr class="dragableProcessTaskTemplateRow" id="@item.Id" value="@item.SequenceNumber">
+                <td>
+                    <img src="~/Content/Images/drag_handle_48px.svg" width="15" height="15" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                @if ((bool)Session["Filtered"] == false)
+                {
+                    <td>
+                        @item.GetProcessDescription()
+                    </td>
+                    <td>
+                        @item.GetProcessStageTemplateDescription()
+                    </td>
+                }
+                <td>
+                    @Html.CRUD_ActionLink("Edit", item.GetType().Name, "Edit", item.Id, true) &nbsp;
+                    @Html.CRUD_ActionLink("Details", item.GetType().Name, "Details", item.Id, true) &nbsp;
+                    @Html.CRUD_ActionLink("Delete", item.GetType().Name, "Delete", item.Id, true)
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+
+</table>
+@Scripts.Render("~/bundles/WalnutUIList")
+
+@if ((bool)Session["Filtered"] == true)
+{
+    <div>
+        @*@Html.ActionLink("Back to List", "Index")*@
+        <a href="javascript:void(0);" onclick="history.go(-1);">Back</a>
+    </div>
+
+}
+
+<script>
+    // this script enables drag & drop
+    $('#ProcessTaskTemplates').sortable({
+
+        update: function (event, ui) {
+
+            //aqui no tengo que hacer nada: leer la nueva secuencia desde la funcion ajax
+
+
+            // first count table rows
+            var rowsCount = $('.dragableProcessTaskTemplateRow').length;
+            //its time to call our old chap AJAX....
+
+            var DraggedElementId = ui.item.get(0).id;
+            var newSequence = [];
+
+            var i;
+            var _processes = $('.dragableProcessTaskTemplateRow');
+            for (i = 0; i < _processes.length; i++) {
+
+                newSequence.push(_processes.get(i).id);
+
+            }
+
+
+            //AJAX call
+            UpdateProcessTaskSequence(newSequence);
+
+        }
+
+    });
+</script>
+
+
+
+<script type="text/javascript">
+
+    //Invoque this junction just in edit mode
+    //$(function () {
+
+    //    fillDependentDropdownList();
+
+    //});
+
+    //$("#ProcessId").change(function () {
+    //    console.log("Ajax call working....");
+    //    //$("#ProcessStageId").empty();
+
+    //    fillDependentDropdownList();
+    //});
+
+
+    function UpdateProcessTaskSequence(sequenceArray) {
+        // code to be executed
+
+            $.ajax({
+            type: 'POST',
+            url: '@Url.Action("UpdateProccessTaskSequence")',
+            //dataType: 'json', // if you uncoment this line you will get an error (!)...
+            // cos AJAX will try to parse the successful 202 (Accepted) return code from the controller as JSON
+            data: { ProcessTaskListToReorder: sequenceArray }, //here the array!!!
+            success: function (ProcessStages) {
+                console.log("We delivered the sequence");
+            },
+            error: function (request, status, error) {
+                alert('Failed to delivery processes new squence.  ' + request.status);
+            }
+        });
+        return false;
+    }
+
+
+
+
+</script>

@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Walnut.Entities.Company>
+@using Walnut.Extensions
+@using Walnut.Models.CustomHTMLHelpers;
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Companies</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table table-condensed">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CompanyName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CompanyTypeId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MainPhoneNumber)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.CompanyName)
+        </td>
+        <td>
+            @item.GeEntitytTypeDescription()
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MainPhoneNumber)
+        </td>
+        <td>
+            @Html.CRUD_ActionLink("Edit", "Company", "Edit", item.Id, true) &nbsp;
+            @Html.CRUD_ActionLink("Details", "Company", "Details", item.Id, true) &nbsp;
+            @Html.CRUD_ActionLink("Delete", "Company", "Delete", item.Id, true)
+        </td>
+    </tr>
+}
+
+</table>
+@Scripts.Render("~/bundles/WalnutUIList")

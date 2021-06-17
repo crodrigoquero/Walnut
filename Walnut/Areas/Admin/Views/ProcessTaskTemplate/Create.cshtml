@@ -1,0 +1,145 @@
+﻿@model Walnut.Entities.ProcessTaskTemplate
+@using Walnut.Extensions
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Process Task</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.ProcessStageId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProcessStageId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProcessStageId, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Processes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                        model => model.ProcessId,
+                        Model.Processes.ToSelectListItem(Model.ProcessId),
+                        "Please select",
+                        new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ProcessId, "", new { @class = "text-danger", @id = "Processes" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.ProcessStages, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                        model => model.ProcessStageId,
+                        Model.ProcessStages.ToSelectListItem(Model.ProcessStageId),
+                        "Please select",
+                        new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ProcessStageId, "", new { @class = "text-danger", @id= "ProcessStages" })
+            </div>
+        </div>*@
+
+        <!--Empty dropdownlist because this one is depending from the previous one, and will be filled by AJAX call-->
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProcessStages, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <select class="form-control" data-val="true" data-val-number="The field Process Stage must be a number." data-val-required="The Process Stage field is required." id="ProcessStageId" name="ProcessStageId"></select>
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Explanation, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextArea("Explanation", new { @class = "form-control", @rows = "10" })
+                @Html.ValidationMessageFor(model => model.Explanation, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TaskTypes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                        model => model.TaskTypeId,
+                        Model.TaskTypes.ToSelectListItem(Model.TaskTypeId),
+                        "Please select",
+                        new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.TaskTypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script type="text/javascript">
+
+    //Invoque this junction just in edit mode
+    //$(function () {
+
+    //    fillDependentDropdownList();
+
+    //});
+
+    $("#ProcessId").change(function () {
+        console.log("Ajax call working....");
+        //$("#ProcessStageId").empty();
+
+        fillDependentDropdownList();
+    });
+
+
+    function fillDependentDropdownList() {
+        // code to be executed
+
+            $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetProcessStages")',
+            dataType: 'json',
+            data: { id: $("#ProcessId").val() },
+            success: function (ProcessStages) {
+                console.log("We have data");
+                $("#ProcessStageId").empty();
+                // states contains the JSON formatted list
+                // of states passed from the controller
+                $.each(ProcessStages, function (i, ProcessStage) {
+                    $("#ProcessStageId").append('<option value="'
+                        + ProcessStage.Id + '">'
+                        + ProcessStage.Description + '</option>');
+                });
+            },
+            error: function (ex) {
+                alert('Failed to retrieve process stateges for this process.' + ex);
+            }
+        });
+        return false;
+    }
+
+
+
+
+</script>

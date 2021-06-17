@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Walnut.Entities.Candidate>
+@using Walnut.Models.CustomHTMLHelpers;
+@{
+    // we need to know the current controller (and the current action some times) in order to
+    // generate the pages url's.
+    var controller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"];
+    var action = HttpContext.Current.Request.RequestContext.RouteData.Values["action"];
+}
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Candidates</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table table-condensed">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DOB)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DOB)
+        </td>
+        <td>
+            @Html.CRUD_ActionLink("Edit", "Candidate", "Edit", item.Id, true) &nbsp;
+            @Html.CRUD_ActionLink("Details", "Candidate", "Details", item.Id, true) &nbsp;
+            @Html.CRUD_ActionLink("Delete", "Candidate", "Delete", item.Id, true)
+        </td>
+    </tr>
+}
+</table>
+@*@Html.Partial("_PagedListPartial")*@
+
+<table id="PaginationContainerTable">
+    <tr height="35px" >
+        <td style="padding-left: 10px; padding-right: 10px;">
+            @Html.PageIndexLinks((int)ViewBag.CurrentPage, (int)ViewBag.TotalRecords, (int)ViewBag.RecordsPerPage, buttonsType: PaginationIndex.ButtonsType.Text)
+         </td>
+    </tr>
+</table>
+
+@*@Html.Action("Index", "CandidateFile")*@
+
+<!--Include the below code line in every single list-->
+@Scripts.Render("~/bundles/Pagination")
+@Scripts.Render("~/bundles/WalnutUIList")
+

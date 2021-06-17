@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Walnut.Entities.CandidateFile>
+
+<br />
+<div style="max-width: 45%;">
+    <table class="table">
+        <tr>
+            <th class="col-md-7">
+                @Html.DisplayNameFor(model => model.FileName)
+            </th>
+            <th class="col-md-1">
+                @Html.DisplayNameFor(model => model.Size)
+            </th>
+            <th class="col-md-1">
+                &nbsp;
+            </th>
+            <th class="col-md-3"></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr class="candidateFileListRow" id="candidateFileListRow_@item.Id.ToString()">
+                <td>
+                    @Html.DisplayFor(modelItem => item.FileName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Size)
+                </td>
+                <td>
+                    <a href="~/Admin/CandidateFile/DownloadFile/@item.Id.ToString()">
+                        <img src="~/Content/Images/Download-icon.png" height="15" width="15" />
+                    </a>
+                </td>
+                <td>
+                    @Ajax.ActionLink(linkText: "Delete",
+                    actionName: "DeleteFile",
+                    routeValues: new { id = item.Id },
+                    htmlAttributes: new { @class = "AJAXDelete" },
+                    ajaxOptions: new AjaxOptions
+                    {
+                        HttpMethod = "GET",
+                        InsertionMode = InsertionMode.Replace,
+                        UpdateTargetId = "FileDeletionDialogArea_" + item.Id.ToString()
+                    })
+                </td>
+            </tr>
+            <tr class="FileDeletionDialogArea" id="FileDeletionDialogArea_@item.Id.ToString()"></tr>
+        }
+    </table>
+</div>
+

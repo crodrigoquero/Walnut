@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Walnut.Entities.CandidateFile>
+@using Walnut.Models.CustomHTMLHelpers;
+@{
+    ViewBag.Title = "Index";
+}
+
+@if ((bool)Session["Filtered"] == true)
+{
+    <h3>@Model.FirstOrDefault().Candidate.FullName - Candidate Files</h3>
+}
+else
+{
+    <h2>All Candidates Files</h2>
+}
+
+
+<p>
+@*@if ((bool)Session["Filtered"] == false)
+{
+    @Html.ActionLink("Create New", "Create")
+}*@
+   
+</p>
+<table class="table table-condensed">
+    <tr>
+        @if ((bool)Session["Filtered"] == false)
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.Candidate.FullName)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.Candidate.LastName)
+            </th>*@
+        }
+        <th>
+            @Html.DisplayNameFor(model => model.FileName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Size)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TimeStamp)
+        </th>
+        <th>
+            &nbsp;
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        @if ((bool)Session["Filtered"] == false)
+        {
+        <td>
+            @Html.DisplayFor(modelItem => item.Candidate.FullName)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.Candidate.LastName)
+        </td>*@
+        }
+        <td>
+            @Html.DisplayFor(modelItem => item.FileName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Size)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TimeStamp)
+        </td>
+        <td>
+            <img src="~/Content/Images/Saving.gif" id=@(new HtmlString(@"""imgNewFile" + item.Id.ToString() + "\"")) value=@item.Id class="btnNewFile" height="15" width="15" hidden />
+            <a class="btnNewFile" href="~/Admin/CandidateFile/Create?candidateId=@item.CandidateId.ToString()" id=@(new HtmlString(@"""btnNewFile" + item.Id.ToString() + "\"")) value=@item.Id >
+                <img src="~/Content/Images/new-file-icon-19.jpg" height="15" width="15" />
+            </a>
+            <a href="~/Admin/CandidateFile/DownloadFile/@item.Id.ToString()"> 
+                <img src="~/Content/Images/Download-icon.png" height="15" width="15" />
+            </a>
+        </td>
+        <td>
+            @Html.CRUD_ActionLink("Edit", "CandidateFile", "Edit", item.Id, true) &nbsp;
+            @Html.CRUD_ActionLink("Details", "CandidateFile", "Details", item.Id, true) &nbsp;
+            @Html.CRUD_ActionLink("Delete", "CandidateFile", "Delete", item.Id, true)
+        </td>
+    </tr>
+}
+</table>
+<!--Include the below code line in every single list-->
+@*@Scripts.Render("~/bundles/Pagination")*@
+@Scripts.Render("~/bundles/WalnutUIList")

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Walnut.Entities.Article>
+@using Walnut.Extensions
+@using Walnut.Models.CustomHTMLHelpers;
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Articles</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table table-condensed">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TimeStamp)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DatePublished)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ArticleTypeId)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TimeStamp)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DatePublished)
+        </td>
+        <td>
+            @item.GeEntitytTypeDescription()
+        </td>
+        <td>
+            @Html.CRUD_ActionLink("Edit", item.GetType().Name, "Edit", item.Id, true) &nbsp;
+            @Html.CRUD_ActionLink("Details", item.GetType().Name, "Details", item.Id, true) &nbsp;
+            @Html.CRUD_ActionLink("Delete", item.GetType().Name, "Delete", item.Id, true)
+        </td>
+    </tr>
+}
+</table>
+@Scripts.Render("~/bundles/WalnutUIList")

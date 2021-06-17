@@ -1,0 +1,38 @@
+﻿@model Walnut.Entities.CandidateFile
+@using Walnut.Extensions
+
+@using Walnut.Models.CustomHTMLHelpers
+@{
+    ViewBag.Title = "Create";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, htmlAttributes: new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <br />
+    <h3>@Model.Candidate.FullName - New Candidate File</h3>
+    <hr />
+    @Html.Partial("_CreateCandidateFilePartial")
+}
+
+<div>
+    @*@Html.ActionLink("Back to List", "Index")*@
+    <a href="javascript:void(0);" onclick="history.go(-1);">Back to List</a>
+</div>
+
+<script script type="text/javascript">
+
+    //EventHandler for the file textbox - we need to select selected file properties
+    $('#files').on('change', function (evt) {
+
+        var files = evt.target.files; // FileList object
+
+        $('#FileName').val(files[0].name);
+        $('#Size').val(files[0].size);
+        $('#TimeStamp').val(new Date().toDateString());
+        //$('#DateModified').val(files[0].lastModifiedDate.toLocaleDateString('en-gb')); // doesn't work'
+        $('#DateModified').val(files[0].lastModifiedDate.toDateString());
+      });
+</script>
+@Scripts.Render("~/bundles/WalnutUI")

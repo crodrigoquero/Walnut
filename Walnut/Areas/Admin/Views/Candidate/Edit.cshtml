@@ -1,0 +1,266 @@
+﻿@model Walnut.Entities.Candidate
+@using Walnut.Extensions
+@using Walnut.Models.CustomHTMLHelpers
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit", "Candidate", FormMethod.Post, htmlAttributes: new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Candidate</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+                @Html.LabelFor(model => model.ImageData, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10" style="border:1px solid #cccccc; width: 140px; margin-left: 15px; padding-top: 10px; padding-bottom: 10px; padding-left: 10px; padding-right: 10px; text-align: center; border-radius: 5px;">
+                @Html.SerializedImage(Model.ImageData, "Candidate portrait", "115", "image", "ImageData")
+                @Html.ValidationMessageFor(model => model.ImageData, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PictureFile, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.PictureFile, new { @class = "custom-file-input", type = "file" })
+                @Html.ValidationMessageFor(model => model.PictureFile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AddressLine3, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AddressLine3, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AddressLine3, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Postcode, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Postcode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Postcode, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Mobile, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Mobile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Genders, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                model => model.GenderId,
+                Model.Genders.ToSelectListItem(Model.GenderId),
+                new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.GenderId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" id='datetimepicker1'>
+            @Html.LabelFor(model => model.DOB, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CountryId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                model => model.CountryId,
+                Model.Countries.ToSelectListItem(Model.CountryId),
+                new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" visa-YesNo-RadioButton>
+            @Html.LabelFor(model => model.VisaNeeded, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                Yes
+                @Html.RadioButtonFor(model => model.VisaNeeded, "true", new { @id = "visaYES" })
+                No
+                @Html.RadioButtonFor(model => model.VisaNeeded, "false" , new { @id = "visaNO" })
+            </div>
+        </div>  
+
+        <div class="form-group" visa-aditional-info>
+            @Html.LabelFor(model => model.VisaInfo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.VisaInfo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.VisaInfo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DriversLicense, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.DriversLicense)
+                    @Html.ValidationMessageFor(model => model.DriversLicense, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.WorkTypes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                        model => model.WorkTypeId,
+                        Model.WorkTypes.ToSelectListItem(Model.WorkTypeId),
+                        new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.WorkTypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <img id="ImgLoader" class="doSomethingSomewhere" src="~/Content/Images/Saving.gif" height="30" width="30" hidden />
+                <input type="submit" id="BtnSave" value="Save" class="btn btn-default doSomethingSomewhere" />
+            </div>
+        </div>
+    </div>
+}
+
+@{ 
+    var _numFilesSufix = Model.CandidateFiles.ToList().Count > 0 ? " (" + Model.CandidateFiles.ToList().Count.ToString() + ")" : ": Add one";
+}
+@Ajax.ActionLink(linkText: "Candidate Files",
+                    actionName: "CandidateFiles",
+                    routeValues: new { Id = Model.Id},
+                    ajaxOptions: new AjaxOptions
+                    {
+                        UpdateTargetId = "ajaxtarget",
+                        InsertionMode = InsertionMode.Replace,
+                        OnComplete = "countCandidateFiles"
+                    })
+<span id="sufix">@_numFilesSufix</span>
+<script type="text/javascript">
+
+    function countCandidateFiles() {
+
+        //Executes when the AJAX ActionLink completes its journey... 
+        var _numFiles = $('.candidateFileListRow').length;
+        var _actionlinkText = "Candidate Files (" + _numFiles.toString() + ")";
+
+        $('#sufix').html(" (" + _numFiles + ")");
+
+        // HTML injection to associate an image (delete icon) to every row
+        var myHTML = "<img src=\"../../../Content/Images/Delete.png\" height=\"15\" width=\"15\"/>";
+        $('.AJAXDelete').html(myHTML);
+
+    }
+
+
+    $('#DOB').datetimepicker({
+        format: 'd/m/Y',
+        timepicker: false
+    });
+
+</script>
+
+
+
+<div id="ajaxtarget"></div>
+<div id="ajaxtargetSecondary"></div>
+<br />
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+<br />
+
+
+
+
+@*<div>
+    <p><b>Candidate Files</b></p>
+    @if (Model.CandidateFiles.ToList().Count == 0) // "candidate.CandidateFiles != null" doesn't work in this context
+    {
+        <p>NO FILES</p>
+    }
+    else
+    {
+        var ficheros = Model.CandidateFiles.ToList();
+        foreach (var fichero in ficheros)
+        {
+            <p>@fichero.FileName</p>
+        };
+    }
+</div>*@
+
+
+@*<p id="rData"></p>
+
+<script type="text/javascript">
+    var url = "http://localhost:63582/Admin/CandidateFile/ToJSON";
+
+    $.get(url, null, function (data) {
+
+        var string = JSON.stringify(data);
+        var objects = JSON.parse(string);
+
+        $("#rData").html(objects[0].Description);
+    });
+
+</script>*@

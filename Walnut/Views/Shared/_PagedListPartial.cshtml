@@ -1,0 +1,39 @@
+﻿@using Walnut.Models.CustomHTMLHelpers;
+@{ 
+    // we need to know the current controller (and the current action some times) in order to
+    // generate the pages url's.
+    var controller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"];
+    var action = HttpContext.Current.Request.RequestContext.RouteData.Values["action"];
+}
+@if ((int)ViewBag.CurrentPage > 1)
+{
+    @Html.ActionLink("<", "", new { page = ViewBag.CurrentPage - 1 }) //only shows the next page char (">") when neeeded
+}
+@for (var a = 1; a <= (int)ViewBag.TotalPages; a++)
+{
+    if (a != ViewBag.CurrentPage)
+    {
+
+        @*@Html.ActionLink(a.ToString(), "", new { page = a })*@ // uncoment this if you prefer to use actionLink method
+
+        // Coment the next two lines if you prefer to use actionLink method or the new html helper "PageIndex"
+        @*string enlace = "<a href=\"" + (string)controller  + "?page=" + a.ToString() + "\">" + a.ToString() + "</a>";
+        @Html.Raw(HttpUtility.HtmlDecode(enlace));*@
+        @Html.PageIndexLink((string)controller, a);
+
+    }
+    else // la pagina actual no debe tener enlace activo
+    {
+        // he incluido el atributo id para facilitar la aplicacion de estilos y codigo javascript reactivo
+        @Html.Raw(HttpUtility.HtmlDecode("<b id=\"PagerCurrentPage\">" + a.ToString() + "</b>"))
+    }
+
+    @Html.Raw(HttpUtility.HtmlDecode(" | "))
+
+}
+@if ((int)ViewBag.CurrentPage < (int)ViewBag.TotalPages)
+{
+    @Html.ActionLink(">", "", new { page = ViewBag.NextPage }) //only shows the next page char (">") when neeeded
+}
+
+

@@ -1,0 +1,137 @@
+﻿@model Walnut.Entities.CandidateFile
+@using Walnut.Extensions
+
+@using Walnut.Models.CustomHTMLHelpers
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit", "CandidateFile", FormMethod.Post, htmlAttributes: new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>CandidateFile</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Candidate.FullName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Candidate.FullName, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                @Html.ValidationMessageFor(model => model.Candidate.FullName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.CandidateId, "CandidateId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CandidateId", null, htmlAttributes: new { @class = "form-control", @readonly = true })
+                @Html.ValidationMessageFor(model => model.CandidateId, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+        @Html.HiddenFor(m => m.CandidateId)
+        @*@Html.HiddenFor(m => m.TimeStamp)*@
+        @*@Html.HiddenFor(m => m.Candidate.FirstName)*@
+        @*@Html.HiddenFor(m => m.CVFile)
+        @Html.HiddenFor(m => m.FileThumbnailData)
+        @Html.HiddenFor(m => m.FileIconData)*@
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FileThumbnailData, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10" style="border:1px solid #cccccc; width: 280px; margin-left: 15px; padding-top: 10px; padding-bottom: 10px; padding-left: 10px; padding-right: 10px; text-align: center; border-radius: 5px;">
+                @Html.SerializedImage(Model.FileThumbnailData, "Candidate CV", "250", "image", "FileData")
+                @Html.ValidationMessageFor(model => model.FileThumbnailData, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CVFile, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.CVFile, new { @class = "custom-file-input", type = "file" })
+                @Html.ValidationMessageFor(model => model.CVFile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FileIconData, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.SerializedImage(Model.FileIconData, "File Icon", "50", "image", "FileIconData")
+                @Html.ValidationMessageFor(model => model.FileIconData, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FileName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FileName, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                @Html.ValidationMessageFor(model => model.FileName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Size, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Size, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                @Html.ValidationMessageFor(model => model.Size, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DateModified, htmlAttributes:  new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DateModified, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                @Html.ValidationMessageFor(model => model.DateModified, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TimeStamp, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TimeStamp, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                @Html.ValidationMessageFor(model => model.TimeStamp, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CandidateFileTypeId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                model => model.CandidateFileTypeId,
+                Model.CandidateFileTypes.ToSelectListItem(Model.CandidateFileTypeId),
+                new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CandidateFileTypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <img id="ImgLoader" class="doSomethingSomewhere" src="~/Content/Images/Saving.gif" height="30" width="30" hidden/>
+                <input type="submit" id="BtnSave"value="Save" class="btn btn-default doSomethingSomewhere" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="javascript:void(0);" onclick="history.go(-1);">Back to List</a>
+</div>
+<script script type="text/javascript">
+    //EventHandler for the file textbox - we need to select selected file properties
+    $('#files').on('change', function (evt) {
+
+        var files = evt.target.files; // FileList object
+        var _dateModid = files[0].lastModifiedDate;
+
+        $('#FileName').val(files[0].name);
+        $('#Size').val(files[0].size);
+        $('#TimeStamp').val(new Date().toLocaleDateString());
+        $('#DateModified').val(files[0].lastModifiedDate.toLocaleDateString('en-gb'));
+
+      });
+</script>
+@Scripts.Render("~/bundles/WalnutUI")

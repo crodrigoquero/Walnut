@@ -1,0 +1,131 @@
+﻿@model Walnut.Entities.Article
+@using Walnut.Extensions
+
+@using Walnut.Models.CustomHTMLHelpers
+@{
+    ViewBag.Title = "Create";
+}
+
+@using (Html.BeginForm("", "", FormMethod.Post, htmlAttributes: new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <br />
+        <h4>New Article</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ArticleImage, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10" style="border:1px solid #cccccc; width: 140px; margin-left: 15px; padding-top: 10px; padding-bottom: 10px; padding-left: 10px; padding-right: 10px; text-align: center; border-radius: 5px;">
+                @Html.SerializedImage(Model.ArticleImage, "Candidate portrait", "115", "image", "ImageData")
+                @Html.ValidationMessageFor(model => model.ArticleImage, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ArticleImageFootNote, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ArticleImageFootNote, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ArticleImageFootNote, "", new { @class = "text-danger" })
+                @*@Walnut.Models.Helper.GetIPAddress();*@
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PictureFile, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.PictureFile, new { @class = "custom-file-input", type = "file" })
+                @Html.ValidationMessageFor(model => model.PictureFile, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ArticleImageLink, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ArticleImageLink, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AuthorId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Subtitle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextArea("Subtitle", Model.Subtitle, new { @class = "form-control", @rows = "3" })
+                @Html.ValidationMessageFor(model => model.Subtitle, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IntroParagraph, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextArea("IntroParagraph", Model.IntroParagraph, new { @class = "form-control", @rows = "10" })
+                @Html.ValidationMessageFor(model => model.IntroParagraph, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Body, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextArea("Body", Model.Body, new { @class = "form-control", @rows = "20" })
+                @Html.ValidationMessageFor(model => model.Body, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.AuthorId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.AuthorId, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AuthorId, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SourceLink, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SourceLink, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.SourceLink, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" id='datetimepicker1'>
+            @Html.LabelFor(model => model.DatePublished, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DatePublished, new { htmlAttributes = new { @class = "form-control datepicker", @type = "text" } })
+                @Html.ValidationMessageFor(model => model.DatePublished, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ArticleTypes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(
+                model => model.ArticleTypeId,
+                Model.ArticleTypes.ToSelectListItem(Model.ArticleTypeId),
+                "Please select",
+                new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ArticleTypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+@Scripts.Render("~/bundles/WalnutUI")
