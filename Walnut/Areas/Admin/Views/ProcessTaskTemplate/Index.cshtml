@@ -11,7 +11,7 @@
 }
 else
 {
-    <h3>Process Tasks Templates</h3>
+    <h3>Process Tasks</h3>
 }
 
 <p>
@@ -23,44 +23,92 @@ else
             &nbsp;
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.Id)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            %
         </th>
         @if ((bool)Session["Filtered"] == false)
         {
             <th>
-                @Html.DisplayNameFor(model => model.ProcessId)
+                @*@Html.DisplayNameFor(model => model.ProcessId)*@
+                @Html.DisplayNameFor(model => model.StartDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProcessStageId)
+                @*@Html.DisplayNameFor(model => model.ProcessStageId)*@
+                @Html.DisplayNameFor(model => model.EndDate)
             </th>
         }
-        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.Level)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ParentTaskId)
+        </th>
+        <th>
+            sec
+        </th>
+        <th>
+            Childs?
+        </th>
     </tr>
     <tbody id="ProcessTaskTemplates">
         @foreach (var item in Model)
         {
-            <tr class="dragableProcessTaskTemplateRow" id="@item.Id" value="@item.SequenceNumber">
-                <td>
-                    <img src="~/Content/Images/drag_handle_48px.svg" width="15" height="15" />
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                @if ((bool)Session["Filtered"] == false)
+        <tr class="dragableProcessTaskTemplateRow" id="@item.Id" value="@item.SequenceNumber">
+            <td>
+                <img src="~/Content/Images/drag_handle_48px.svg" width="15" height="15" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @for (int i = 0; i < item.Level; i++)
                 {
-                    <td>
-                        @item.GetProcessDescription()
-                    </td>
-                    <td>
-                        @item.GetProcessStageTemplateDescription()
-                    </td>
+
+                    @Html.Raw(HttpUtility.HtmlDecode("<b>-</b>"))
+                    //Code Block
                 }
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PercentComplete)
+            </td>
+            @if ((bool)Session["Filtered"] == false)
+            {
                 <td>
-                    @Html.CRUD_ActionLink("Edit", item.GetType().Name, "Edit", item.Id, true) &nbsp;
-                    @Html.CRUD_ActionLink("Details", item.GetType().Name, "Details", item.Id, true) &nbsp;
-                    @Html.CRUD_ActionLink("Delete", item.GetType().Name, "Delete", item.Id, true)
+                    @*@item.GetProcessDescription()*@
+                    @item.StartDate.ToString("MM/dd/yyyy")
                 </td>
-            </tr>
+                <td>
+                    @*@item.GetProcessStageTemplateDescription()*@
+                    @item.EndDate.ToString("MM/dd/yyyy")
+                </td>
+            }
+            <td>
+                @item.Level
+            </td>
+            <td>
+                @item.ParentTaskId
+            </td>
+            <td>
+                @item.SequenceNumber
+            </td>
+            <td>
+                @item.HasChild
+            </td>
+            <td>
+                <a href="~/Admin/ProcessTaskTemplate/IncreaseLevel/@item.Id"><img src="~/Content/Images/StageIcon.png" width="15" height="15" /></a>
+            </td>
+            <td>
+                @Html.CRUD_ActionLink("Edit", item.GetType().Name, "Edit", item.Id, true) &nbsp;
+                @Html.CRUD_ActionLink("Details", item.GetType().Name, "Details", item.Id, true) &nbsp;
+                @Html.CRUD_ActionLink("Delete", item.GetType().Name, "Delete", item.Id, true)
+            </td>
+        </tr>
         }
 
     </tbody>

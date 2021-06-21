@@ -81,10 +81,145 @@ namespace Walnut.Areas.Admin.Controllers
 
         }
 
+        //[HttpPost]
+        [HttpGet]
+        public ActionResult IncreaseLevel(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+             }
 
+            db.Configuration.ProxyCreationEnabled = false; // to remove loading child entities (otherwise we get an exception)
+
+            ProcessTaskTemplate proc  = db.ProcessTasksTemplates.Find(id);
+
+            if (proc == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+
+            int previousSequenceNumber = proc.SequenceNumber -1;
+            int nextSequenceNumber = proc.SequenceNumber + 1;
+
+            ProcessTaskTemplate previousTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == previousSequenceNumber).SingleOrDefault();
+            ProcessTaskTemplate nextTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == nextSequenceNumber).SingleOrDefault();
+
+            if (previousTask == null) // if has no proevious task we can do nothing
+            {
+                previousTask = proc;
+                previousTask.Level = -1;
+            }
+
+            if (nextTask == null) // current task is the last one
+            {
+                nextTask = proc;
+                proc.HasChild = false;
+            
+            }
+
+            // but if the current task has a previous one (father candidate)...
+            proc.ParentTaskId = previousTask.Id;
+
+
+            // child task Must have higher level than its father task
+            proc.Level = previousTask.Level + 1;
+
+            //make sure level increses only once in relation to its father task
+            if ((proc.Level + 1) > (previousTask.Level + 2))
+            {
+                proc.Level = proc.Level - 2;
+            }
+            else
+            {
+                proc.Level = previousTask.Level + 1;
+            }
+
+            if (nextTask.ParentTaskId == proc.Id) proc.HasChild = true;
+                
+       
+            if (proc.SequenceNumber == 1)
+            {
+                proc.Level = 0;
+                proc.ParentTaskId = 0;
+
+            }
+
+            //rest % completion in all father tasks
+            foreach (ProcessTaskTemplate task in db.ProcessTasksTemplates.ToList())
+            {
+                if (task.HasChild == true) task.PercentComplete = 0;
+            }
+
+            db.SaveChanges();
+
+            //find last node of the rows hierachy
+            ProcessTaskTemplate lastNode = GetLastHierachyNodeRecursive(proc);
+
+            //calculate acumulative nested task completion percent
+            CalculateNestedTaskProgressRecursive(lastNode);
+
+            db.SaveChanges();
+
+
+            //return new HttpStatusCodeResult(HttpStatusCode.Accepted);
+            return Redirect(Request.UrlReferrer.ToString() + "#header");
+
+        }
+
+        /// <summary>
+        /// Gets the last hierachy node of a level 0 task
+        /// </summary>
+        /// <param name="proc"></param>
+        /// <returns></returns>
+        private ProcessTaskTemplate GetLastHierachyNodeRecursive(ProcessTaskTemplate proc)
+        {
+            if (proc.HasChild == false)
+            {
+                return proc; //terminate recursion
+            }
+
+
+            //find child and father tasks (next one)
+            int nextSequenceNumber = proc.SequenceNumber + 1;
+            ProcessTaskTemplate chilTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == nextSequenceNumber).SingleOrDefault();
+
+
+
+            proc = GetLastHierachyNodeRecursive(chilTask);
+
+            if (proc == null)
+            {
+                return null;
+            }
+
+ 
+            return proc;
+        }
+
+        private ProcessTaskTemplate CalculateNestedTaskProgressRecursive(ProcessTaskTemplate proc)
+        {
+            if (proc.ParentTaskId == 0)
+            {
+                return null;
+            }
+
+
+            //find parent task and add current task %completion percent
+            ProcessTaskTemplate parentTask = db.ProcessTasksTemplates.Where(x => x.Id == proc.ParentTaskId).SingleOrDefault();
+
+
+
+            
+            parentTask.PercentComplete = proc.PercentComplete + parentTask.PercentComplete;
+            db.SaveChanges();
+
+            return CalculateNestedTaskProgressRecursive(parentTask);
+        }
 
         // GET: Admin/ProcessStageTask
-        public  ActionResult Index(int? ProcessId, int? ProcessStageId)
+        public ActionResult Index(int? ProcessId, int? ProcessStageId)
         {
 
             // model = await db.ProcessStages.Where(x => x.ProcessId == ProcessId).OrderBy(p => p.SequenceNumber).ToListAsync();
@@ -201,7 +336,7 @@ namespace Walnut.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Description,ProcessId,ProcessStageId,Explanation,TaskTypeId")] Entities.ProcessTaskTemplate processStageTask)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Description,ProcessId,ProcessStageId,Explanation,TaskTypeId,StartDate,EndDate,PercentComplete,ParentTaskId,SequenceNumber,Level,HasChild")] Entities.ProcessTaskTemplate processStageTask)
         {
             if (ModelState.IsValid)
             {
@@ -241,7 +376,7 @@ namespace Walnut.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Description,ProcessId,ProcessStageId,Explanation,TaskTypeId")] Entities.ProcessTaskTemplate processStageTask)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Description,ProcessId,ProcessStageId,Explanation,TaskTypeId,StartDate,EndDate,PercentComplete,ParentTaskId,SequenceNumber,Level,HasChild")] Entities.ProcessTaskTemplate processStageTask)
         {
             if (ModelState.IsValid)
             {

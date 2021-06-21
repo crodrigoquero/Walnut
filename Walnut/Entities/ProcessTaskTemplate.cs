@@ -29,17 +29,30 @@ namespace Walnut.Entities
         //[Required] //not set = generic task
         public int? TaskTypeId { get; set; }
 
-        //[Required]
-        //public DateTime StartDate { get; set; }
-
-        //[Required]
-        //public DateTime ActualStartDate { get; set; }
+        [Required]
+        [DisplayName("Start Date")]
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime StartDate { get; set; }
 
         //[Required]
         //public DateTime Deadline { get; set; }
 
-        //[Required]
-        //public DateTime ActualEndDate { get; set; }
+        [Required]
+        [DisplayName("End Date")]
+        [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime EndDate { get; set; }
+
+        [Required]
+        [Range(typeof(int), "0", "1500")]
+        public int PercentComplete { get; set; }
+
+        [Required]
+        [DisplayName("Parent")]
+        public int ParentTaskId { get; set; }
+
+        public int Level { get; set; }
+
+        public bool HasChild { get; set; }
 
         [Required]
         [DisplayName("About")]

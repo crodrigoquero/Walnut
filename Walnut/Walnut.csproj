@@ -29,6 +29,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -308,6 +309,22 @@
     <Compile Include="Migrations\201909130927038_Top10ModelUpdate.cs" />
     <Compile Include="Migrations\201909130927038_Top10ModelUpdate.Designer.cs">
       <DependentUpon>201909130927038_Top10ModelUpdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106180920278_ProcessTemplateEntityUpdate.cs" />
+    <Compile Include="Migrations\202106180920278_ProcessTemplateEntityUpdate.Designer.cs">
+      <DependentUpon>202106180920278_ProcessTemplateEntityUpdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106181241181_correctDates.cs" />
+    <Compile Include="Migrations\202106181241181_correctDates.Designer.cs">
+      <DependentUpon>202106181241181_correctDates.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106190925587_AddLevellPropToProcessTaskTemplateEntity.cs" />
+    <Compile Include="Migrations\202106190925587_AddLevellPropToProcessTaskTemplateEntity.Designer.cs">
+      <DependentUpon>202106190925587_AddLevellPropToProcessTaskTemplateEntity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202106201025581_AddHasChildPropInProcessTaskTemplateEntity.cs" />
+    <Compile Include="Migrations\202106201025581_AddHasChildPropInProcessTaskTemplateEntity.Designer.cs">
+      <DependentUpon>202106201025581_AddHasChildPropInProcessTaskTemplateEntity.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -876,6 +893,18 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201909130927038_Top10ModelUpdate.resx">
       <DependentUpon>201909130927038_Top10ModelUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106180920278_ProcessTemplateEntityUpdate.resx">
+      <DependentUpon>202106180920278_ProcessTemplateEntityUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106181241181_correctDates.resx">
+      <DependentUpon>202106181241181_correctDates.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106190925587_AddLevellPropToProcessTaskTemplateEntity.resx">
+      <DependentUpon>202106190925587_AddLevellPropToProcessTaskTemplateEntity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106201025581_AddHasChildPropInProcessTaskTemplateEntity.resx">
+      <DependentUpon>202106201025581_AddHasChildPropInProcessTaskTemplateEntity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
