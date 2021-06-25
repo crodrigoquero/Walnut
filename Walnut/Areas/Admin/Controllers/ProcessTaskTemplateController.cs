@@ -88,7 +88,7 @@ namespace Walnut.Areas.Admin.Controllers
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-             }
+            }
 
             db.Configuration.ProxyCreationEnabled = false; // to remove loading child entities (otherwise we get an exception)
 
@@ -162,6 +162,75 @@ namespace Walnut.Areas.Admin.Controllers
 
             db.SaveChanges();
 
+
+            //return new HttpStatusCodeResult(HttpStatusCode.Accepted);
+            return Redirect(Request.UrlReferrer.ToString() + "#header");
+
+        }
+
+        [HttpGet]
+        public ActionResult DecreaseLevel(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            db.Configuration.ProxyCreationEnabled = false; // to remove loading child entities (otherwise we get an exception)
+
+            ProcessTaskTemplate proc = db.ProcessTasksTemplates.Find(id);
+
+            if (proc == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            int previousSecuenceNumber = proc.SequenceNumber - 1;
+            ProcessTaskTemplate parentTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == previousSecuenceNumber).SingleOrDefault();
+
+
+            // task level can't be negative
+            if (proc.Level > 0)
+            {
+                proc.Level --;
+
+                if (parentTask != null)
+                {
+                    if (proc.Level == parentTask.Level)
+                    {
+                        proc.ParentTaskId = parentTask.ParentTaskId;
+                    }
+                    else
+                    {
+                        // goto grandparent!!!
+                        for (int i= proc.Level; i-- > 0;)
+                        {
+                            previousSecuenceNumber = parentTask.SequenceNumber -1;
+                            parentTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == previousSecuenceNumber).SingleOrDefault();
+                            if (parentTask == null)
+                            {
+                                break;
+                            }
+
+                            if (parentTask.Level == proc.Level)
+                            {
+                                break;
+                            }
+                        }
+                        proc.ParentTaskId = parentTask.ParentTaskId;
+                    }
+                   
+                }
+            }
+
+
+            // if task level becomes 0, the task is not a child task any more
+            if (proc.Level == 0) 
+            {
+                proc.ParentTaskId = 0;
+            }
+
+            db.SaveChanges();
 
             //return new HttpStatusCodeResult(HttpStatusCode.Accepted);
             return Redirect(Request.UrlReferrer.ToString() + "#header");
