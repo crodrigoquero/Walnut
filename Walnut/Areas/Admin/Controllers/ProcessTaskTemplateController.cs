@@ -81,7 +81,6 @@ namespace Walnut.Areas.Admin.Controllers
 
         }
 
-        //[HttpPost]
         [HttpGet]
         public ActionResult IncreaseLevel(int? id)
         {
@@ -154,22 +153,25 @@ namespace Walnut.Areas.Admin.Controllers
 
             db.SaveChanges();
 
-            //find last node of the rows hierachy
-            ProcessTaskTemplate lastNode = GetLastHierachyNodeRecursive(proc);
+            // Update HasChild flag in the whole task list
+            List<ProcessTaskTemplate> taskList = db.ProcessTasksTemplates.OrderBy(x => x.SequenceNumber).ToList();
 
-            //calculate acumulative nested task completion percent
-            CalculateNestedTaskProgressRecursive(lastNode);
+            foreach (ProcessTaskTemplate item in taskList)
+            {
+                UpdateCurrentTaskHasChildFlag(item);
+            }
 
             db.SaveChanges();
-
 
             //return new HttpStatusCodeResult(HttpStatusCode.Accepted);
             return Redirect(Request.UrlReferrer.ToString() + "#header");
 
         }
 
+
+
         [HttpGet]
-        public ActionResult DecreaseLevel(int? id)
+        public ActionResult DecreaseLevelAndUpdateCurrentTaskParenthood(int? id)
         {
             if (id == null)
             {
@@ -185,9 +187,9 @@ namespace Walnut.Areas.Admin.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            // FIND PARENT TASK AND GET ITS LEVEL
             int previousSecuenceNumber = proc.SequenceNumber - 1;
             ProcessTaskTemplate parentTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == previousSecuenceNumber).SingleOrDefault();
-
 
             // task level can't be negative
             if (proc.Level > 0)
@@ -202,7 +204,7 @@ namespace Walnut.Areas.Admin.Controllers
                     }
                     else
                     {
-                        // goto grandparent!!!
+                        // find new parent going backward in hierarchy!!!
                         for (int i= proc.Level; i-- > 0;)
                         {
                             previousSecuenceNumber = parentTask.SequenceNumber -1;
@@ -216,11 +218,14 @@ namespace Walnut.Areas.Admin.Controllers
                             {
                                 break;
                             }
+
                         }
+
                         proc.ParentTaskId = parentTask.ParentTaskId;
                     }
                    
                 }
+
             }
 
 
@@ -229,6 +234,12 @@ namespace Walnut.Areas.Admin.Controllers
             {
                 proc.ParentTaskId = 0;
             }
+            // FIND PARENT TASK END
+
+            //// Update HasChild flag in the whole task list
+            List<ProcessTaskTemplate> taskList = db.ProcessTasksTemplates.OrderBy(x => x.SequenceNumber).ToList();
+
+            UpdateOnAllTasksTheHasChildFlag(taskList);
 
             db.SaveChanges();
 
@@ -237,55 +248,134 @@ namespace Walnut.Areas.Admin.Controllers
 
         }
 
-        /// <summary>
-        /// Gets the last hierachy node of a level 0 task
-        /// </summary>
-        /// <param name="proc"></param>
-        /// <returns></returns>
-        private ProcessTaskTemplate GetLastHierachyNodeRecursive(ProcessTaskTemplate proc)
+        public ActionResult CaculateAverageCompletion()
         {
-            if (proc.HasChild == false)
+            //select all the main task (level 0) and perform a recursive calculation in them
+            List<ProcessTaskTemplate> Level0TaskList = db.ProcessTasksTemplates.Where(x => x.Level == 0).ToList();
+
+            foreach (ProcessTaskTemplate item in Level0TaskList)
             {
-                return proc; //terminate recursion
+                item.PercentComplete = CaculateAverageCompletionRecursive(item, 0, 0, 0);
+                db.SaveChanges();
             }
 
 
-            //find child and father tasks (next one)
-            int nextSequenceNumber = proc.SequenceNumber + 1;
-            ProcessTaskTemplate chilTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == nextSequenceNumber).SingleOrDefault();
+            //repeat the next code line for every level 0 task
 
+            //ProcessTaskTemplate proc = db.ProcessTasksTemplates.Where(x => x.Id == 8).FirstOrDefault();
 
+            //if (proc == null) return Redirect(Request.UrlReferrer.ToString() + "#header");
 
-            proc = GetLastHierachyNodeRecursive(chilTask);
+            //proc.PercentComplete = CaculateAverageCompletionRecursive(proc, 0, 0, 0);
+            //db.SaveChanges();
 
-            if (proc == null)
-            {
-                return null;
-            }
-
- 
-            return proc;
+            //return new HttpStatusCodeResult(HttpStatusCode.Accepted);
+            return Redirect(Request.UrlReferrer.ToString() + "#header");
         }
 
-        private ProcessTaskTemplate CalculateNestedTaskProgressRecursive(ProcessTaskTemplate proc)
+        private int CaculateAverageCompletionRecursive(ProcessTaskTemplate proc, int percentCompleteSum, int childsCout, int completionAverage)
         {
-            if (proc.ParentTaskId == 0)
+            //find last node of the rows hierachy
+            //ProcessTaskTemplate lastNode = GetLastHierachyNodeRecursive(proc);
+            //calculate acumulative nested task completion percent
+            //CalculateNestedTaskProgressRecursive(lastNode);
+            if (proc.Level == 0) proc.PercentComplete = 0; // WARNING: you must reset the main task completion %
+
+            int nextSequenceNumber = proc.SequenceNumber + 1;
+
+            ProcessTaskTemplate nextTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == nextSequenceNumber).FirstOrDefault();
+
+
+            percentCompleteSum +=  proc.PercentComplete;
+
+            if (childsCout > 0) completionAverage = percentCompleteSum / childsCout;
+            childsCout++;
+
+            if (nextTask == null) return completionAverage;
+
+            if (nextTask.Level == 0) return completionAverage; // if next task is a level 0 (main task)
+
+            return CaculateAverageCompletionRecursive(nextTask, percentCompleteSum, childsCout, completionAverage);
+
+        }
+
+
+        private void UpdateOnAllTasksTheHasChildFlag(List<ProcessTaskTemplate> taskList)
+        {
+            foreach (ProcessTaskTemplate item in taskList)
             {
-                return null;
+                UpdateCurrentTaskHasChildFlag(item);
+            }
+        }
+
+        private void UpdateCurrentTaskHasChildFlag(ProcessTaskTemplate proc)
+        {
+            // go to next task (in user stablished sequence order)
+            int nextSecuenceNumber = proc.SequenceNumber + 1;
+            ProcessTaskTemplate nextTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == nextSecuenceNumber).SingleOrDefault();
+
+            if (nextTask == null)
+            {
+                return;
+            }
+
+            // if the next task level is higher than the current task level,
+            // upodate "HasChild" flag
+            if (nextTask.Level > proc.Level)
+            {
+                proc.HasChild = true;
+            }
+            else
+            {
+                proc.HasChild = false;
             }
 
 
-            //find parent task and add current task %completion percent
-            ProcessTaskTemplate parentTask = db.ProcessTasksTemplates.Where(x => x.Id == proc.ParentTaskId).SingleOrDefault();
+        }
+
+        //private ProcessTaskTemplate GetLastHierachyNodeRecursive(ProcessTaskTemplate proc)
+        //{
+        //    if (proc.HasChild == false)
+        //    {
+        //        return proc; //terminate recursion
+        //    }
+
+        //    //find child and father tasks (next one)
+        //    int nextSequenceNumber = proc.SequenceNumber + 1;
+        //    ProcessTaskTemplate chilTask = db.ProcessTasksTemplates.Where(x => x.SequenceNumber == nextSequenceNumber).SingleOrDefault();
+
+        //    proc = GetLastHierachyNodeRecursive(chilTask);
+
+        //    if (proc == null)
+        //    {
+        //        return null;
+        //    }
+
+        //    return proc;
+        //}
+
+        //private ProcessTaskTemplate CalculateNestedTaskProgressRecursive(ProcessTaskTemplate proc)
+        //{
+        //    if (proc.ParentTaskId == 0)
+        //    {
+        //        return null;
+        //    }
+
+
+        //    //find parent task and add current task %completion percent
+        //    ProcessTaskTemplate parentTask = db.ProcessTasksTemplates.Where(x => x.Id == proc.ParentTaskId).SingleOrDefault();
 
 
 
             
-            parentTask.PercentComplete = proc.PercentComplete + parentTask.PercentComplete;
-            db.SaveChanges();
+        //    parentTask.PercentComplete = proc.PercentComplete + parentTask.PercentComplete;
+        //    db.SaveChanges();
 
-            return CalculateNestedTaskProgressRecursive(parentTask);
-        }
+        //    return CalculateNestedTaskProgressRecursive(parentTask);
+        //}
+
+
+
 
         // GET: Admin/ProcessStageTask
         public ActionResult Index(int? ProcessId, int? ProcessStageId)

@@ -17,6 +17,9 @@ else
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+<p>
+    @Html.ActionLink("Calculate Completion %", "CaculateAverageCompletion")
+</p>
 <table class="table table-condensed" id="dataTable">
     <tr>
         <th>
@@ -101,7 +104,7 @@ else
                 @item.HasChild
             </td>
             <td>
-                <a href="~/Admin/ProcessTaskTemplate/decreaseLevel/@item.Id"><img src="~/Content/Images/left-arrow.png" width="15" height="15" /></a>
+                <a href="~/Admin/ProcessTaskTemplate/DecreaseLevelAndUpdateCurrentTaskParenthood/@item.Id"><img src="~/Content/Images/left-arrow.png" width="15" height="15" /></a>
             </td>
             <td>
                 <a href="~/Admin/ProcessTaskTemplate/IncreaseLevel/@item.Id"><img src="~/Content/Images/StageIcon.png" width="15" height="15" /></a>
